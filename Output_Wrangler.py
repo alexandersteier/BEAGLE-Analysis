@@ -15,16 +15,14 @@ class BEAGLE_Wrangler:
     def __init__(self, beagle_output, samples):
         # File Wrangler (setting up parameters to extract data)
         os.chdir('/Users/alexander.steier/Python_Stockpile/BEAGLE_Outputs/'+beagle_output)
-        try:
-            count = 0
-            while True:
-                count += 1
-                hdul = fits.open(str(count+1)+'_BEAGLE.fits')
-        except:
-              number_of_galaxies = count
-
-        number_of_bands = len(hdul[10].data[0])
-        wavelength_range = hdul[8].data[0][0]
+        count = 0
+        while os.path.exists(str(count+1)+'_BEAGLE.fits'):
+            count += 1
+        
+        galaxy_file_structure = fits.open(str(count)+'_BEAGLE.fits')
+        number_of_galaxies = count
+        number_of_bands = len(galaxy_file_structure[10].data[0])
+        wavelength_range = galaxy_file_structure[8].data[0][0]
         
         file_names = np.empty(number_of_galaxies, dtype=np.dtype('U100'))
         galaxy_photometry = np.zeros((number_of_galaxies, samples, number_of_bands))
