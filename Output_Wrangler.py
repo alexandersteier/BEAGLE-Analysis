@@ -2,11 +2,6 @@ import numpy as np
 import math as math
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib
-import scipy
-from scipy import constants
-from scipy.stats import chi2
-from scipy.optimize import curve_fit
 import os
 from astropy.io import fits
 
