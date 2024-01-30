@@ -19,49 +19,66 @@ class BEAGLE_Wrangler:
         while os.path.exists(str(count+1)+'_BEAGLE.fits'):
             count += 1
         
+        # File properties
         galaxy_file_structure = fits.open(str(count)+'_BEAGLE.fits')
         number_of_galaxies = count
         number_of_bands = len(galaxy_file_structure[10].data[0])
         wavelength_range = galaxy_file_structure[8].data[0][0]
+        number_of_params = len(galaxy_file_structure[12].data[0]) - 4 # .fits file structure
+        sfh_time_length = len(galaxy_file_structure[6].data[0]['lookback_age'])
         
+        # Empty arrays to be filled
         file_names = np.empty(number_of_galaxies, dtype=np.dtype('U100'))
         galaxy_photometry = np.zeros((number_of_galaxies, samples, number_of_bands))
         sed_fits = np.zeros((number_of_galaxies, samples, len(wavelength_range)))
+        params = np.zeros((number_of_galaxies, number_of_params, samples))
+        sfh = np.zeros((number_of_galaxies, samples, sfh_time_length))
+        sfh_time = np.zeros((number_of_galaxies, samples, sfh_time_length))
         
         # Extracting data
         for i in range(number_of_galaxies):
             file_names[i] = str(i+1)+'_BEAGLE.fits'
             hdul = fits.open(file_names[i])
-            for j in range(samples):
-                galaxy_photometry[i][j] = hdul[10].data[-j-1]
-                sed_fits[i][j] = hdul[9].data[-j-1]
-            gprop = hdul[12].data
-        print(galaxy_photometry)
-        print(sed_fits)
+            
+            posterior_pdf = hdul[12].data[-samples-1:-1]
+            for j in range(number_of_params):
+                for k in range(samples):
+                    params[i][j][k] = posterior_pdf[k][j+4]
+
+            for k in range(samples):
+                galaxy_photometry[i][k] = hdul[10].data[-1-samples+k]
+                sed_fits[i][k] = hdul[9].data[-1-samples+k]
+            
+            sfh[i] = hdul[6].data['SFR'][-1-samples:-1]
+            sfh_time[i] = hdul[6].data['lookback_age'][-1-samples:-1]
+
+        param_names = []
+        for j in range(number_of_params):
+            param_names.append(hdul[12].header["TTYPE" + str(j+5)]) # 4 + 1
 
         #List of Attributes
         self.photometry = galaxy_photometry
         self.SEDs = sed_fits
         self.wavelength_range = wavelength_range
-        self.numpy = beagle_output
+        self.params = params
+        self.param_names = param_names
+        self.sfh = sfh
+        self.sfh_time = sfh_time
 
-    def spectra(self):
+    def spectra_plot(self):
         # Under Constuction
-        spectra = self.numpy
-        return spectra
+        plt.plot()
     
-    def sfh(self):
+    def sfh_plot(self, galaxy_number):
         # Under Construction
-        sfh = self.numpy
-        return sfh
+        plt.plot(self.sfh_time[galaxy_number-1][0], self.sfh[galaxy_number-1][0])
+        plt.show()
     
-    def params(self):
+    def params_plot(self):
         # Under Construction
-        params = self.numpy
-        return params
+        plt.plot()
 
 
 Fit20 = BEAGLE_Wrangler('Fit 20', 100)
 
-plt.plot(Fit20.wavelength_range, Fit20.SEDs[0][99])
-plt.show()
+Fit20.sfh_plot(1)
