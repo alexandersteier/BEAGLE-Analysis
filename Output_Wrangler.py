@@ -21,6 +21,7 @@ class BEAGLE_Wrangler:
         wavelength_range = galaxy_file_structure[8].data[0][0]
         number_of_params = len(galaxy_file_structure[12].data[0]) - 4 # .fits file structure
         sfh_time_length = len(galaxy_file_structure[6].data[0]['lookback_age'])
+        og_photometry_data = fits.open('photo_data.fits')
         
         # Empty arrays to be filled
         file_names = np.empty(number_of_galaxies, dtype=np.dtype('U100'))
@@ -29,12 +30,16 @@ class BEAGLE_Wrangler:
         params = np.zeros((number_of_galaxies, number_of_params, samples))
         sfh = np.zeros((number_of_galaxies, samples, sfh_time_length))
         sfh_time = np.zeros((number_of_galaxies, samples, sfh_time_length))
+        og_photometry = np.zeros((number_of_galaxies, 2*number_of_bands))
         
         # Extracting data
         for i in range(number_of_galaxies):
             file_names[i] = str(i+1)+'_BEAGLE.fits'
             hdul = fits.open(file_names[i])
             
+            for j in range(2*number_of_bands):
+                og_photometry[i][j] = og_photometry_data[1].data[i][j+1]
+
             posterior_pdf = hdul[12].data[-samples-1:-1]
             for j in range(number_of_params):
                 for k in range(samples):
@@ -59,15 +64,32 @@ class BEAGLE_Wrangler:
         self.param_names = param_names
         self.sfh = sfh
         self.sfh_time = sfh_time
+        self.number_of_galaxies = number_of_galaxies
 
     def spectra_plot(self):
         # Under Constuction
         plt.plot()
     
     def sfh_plot(self, galaxy_number):
-        # Under Construction
-        plt.plot(self.sfh_time[galaxy_number-1][0], self.sfh[galaxy_number-1][0])
-        plt.show()
+        # Input Handler
+        if galaxy_number == "all":
+            galaxies = np.arange(self.number_of_galaxies)
+        elif type(galaxy_number) == int:
+            galaxies = np.array([galaxy_number-1])
+        else:
+            print("invalid galaxy number")
+            galaxies = np.array([0])
+
+        # Plotting
+        for i in galaxies:
+            x = self.sfh_time[i][0]
+            y = self.sfh[i][0]
+            plt.plot(x, y, label="Star Formation History")
+            plt.xscale('log')
+            plt.xlim((min(x), max(x)))
+            plt.legend()
+            plt.show()
+            plt.close()
     
     def params_plot(self):
         # Under Construction
