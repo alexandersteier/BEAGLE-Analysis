@@ -145,20 +145,30 @@ class BEAGLE_Wrangler:
 
         # Plotting
         for i in galaxies:
-            x = self.sfh_time[i][0]
-            y = self.sfh[i][0]
-            plt.plot(x, y, label="Star Formation History")
+            for k in range(self.samples):
+                plt.plot(self.sfh_time[i][k], self.sfh[i][k], alpha=1/self.samples, color='tab:green')
+            plt.plot(-1, -1, label="Star Formation History", color='tab:green')
+            plt.xlim((1e4, 1e10))
             plt.xscale('log')
-            plt.xlim((min(x), max(x)))
+            plt.xlabel("Lookback Time (yr)")
+            plt.ylabel(r"SFR (M$_\odot$/yr)")
             plt.legend()
             plt.show()
             plt.close()
     
-    def params_plot(self):
-        # Under Construction
-        plt.plot()
+    def params_plot(self, galaxy_number):
+        # Input Handler
+        if galaxy_number == "all":
+            galaxies = np.arange(self.number_of_galaxies)
+        elif type(galaxy_number) == int:
+            galaxies = np.array([galaxy_number-1])
+        else:
+            print("invalid galaxy number")
+            galaxies = np.array([0])
 
-
-Fit20 = BEAGLE_Wrangler('Fit 20', 100)
-
-Fit20.spectra_plot(1)
+        # Plotting
+        for i in galaxies:
+            df = pd.DataFrame(self.params[i].transpose(), columns=self.param_names)
+            pd.plotting.scatter_matrix(df, figsize=(8,8), marker = '.', hist_kwds = {'bins': 11, 'color': "tab:purple"}, alpha = 0.85, range_padding=0.2, color="tab:purple")
+            plt.show()
+            plt.close()
