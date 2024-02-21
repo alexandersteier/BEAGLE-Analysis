@@ -87,7 +87,7 @@ class BEAGLE_Wrangler:
         self.filter_center = filter_center
         self.filter_width = filter_width
 
-    def spectra_plot(self, galaxy_number):
+    def spectra_plot(self, galaxy_number, suppress=True):
          # Input Handler
         if galaxy_number == "all":
             galaxies = np.arange(self.number_of_galaxies)
@@ -130,10 +130,11 @@ class BEAGLE_Wrangler:
             plt.xlabel(r'Wavelength (${\AA}$)', fontsize='large')
             plt.ylabel(r'$F_\nu$ (erg cm$^{-2}$ sec$^{-1}$ Hz$^{-1}$)', fontsize='large')
             plt.title('Spectral Energy Distribution (Galaxy ' + str(i+1) + ')', fontsize='large')
-            plt.show()
-            plt.close()
+            if suppress == False:
+                plt.show()
+                plt.close()
     
-    def sfh_plot(self, galaxy_number):
+    def sfh_plot(self, galaxy_number, suppress=True):
         # Input Handler
         if galaxy_number == "all":
             galaxies = np.arange(self.number_of_galaxies)
@@ -153,10 +154,11 @@ class BEAGLE_Wrangler:
             plt.xlabel("Lookback Time (yr)")
             plt.ylabel(r"SFR (M$_\odot$/yr)")
             plt.legend()
-            plt.show()
-            plt.close()
+            if suppress == False:
+                plt.show()
+                plt.close()
     
-    def params_plot(self, galaxy_number):
+    def params_plot(self, galaxy_number, suppress=True):
         # Input Handler
         if galaxy_number == "all":
             galaxies = np.arange(self.number_of_galaxies)
@@ -170,5 +172,6 @@ class BEAGLE_Wrangler:
         for i in galaxies:
             df = pd.DataFrame(self.params[i].transpose(), columns=self.param_names)
             pd.plotting.scatter_matrix(df, figsize=(8,8), marker = '.', hist_kwds = {'bins': 11, 'color': "tab:purple"}, alpha = 0.85, range_padding=0.2, color="tab:purple")
-            plt.show()
-            plt.close()
+            if suppress == False:
+                plt.show()
+                plt.close()
