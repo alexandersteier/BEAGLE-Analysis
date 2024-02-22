@@ -127,10 +127,10 @@ class BEAGLE_Wrangler:
             plt.yscale('log')
             plt.xlim((0, 5e4))
             plt.ylim((0.5*reference_photometry[i].min(), 10*reference_photometry[i].max()))
-            plt.xlabel(r'Wavelength (${\AA}$)', fontsize='large')
-            plt.ylabel(r'$F_\nu$ (erg cm$^{-2}$ sec$^{-1}$ Hz$^{-1}$)', fontsize='large')
-            plt.title('Spectral Energy Distribution (Galaxy ' + str(i+1) + ')', fontsize='large')
             if suppress == False:
+                plt.title('Spectral Energy Distribution (Galaxy ' + str(i+1) + ')', fontsize='large')
+                plt.xlabel(r'Wavelength (${\AA}$)', fontsize='large')
+                plt.ylabel(r'$F_\nu$ (erg cm$^{-2}$ sec$^{-1}$ Hz$^{-1}$)', fontsize='large')
                 plt.show()
                 plt.close()
     
@@ -149,12 +149,14 @@ class BEAGLE_Wrangler:
             for k in range(self.samples):
                 plt.plot(self.sfh_time[i][k], self.sfh[i][k], alpha=1/self.samples, color='tab:green')
             plt.plot(-1, -1, label="Star Formation History", color='tab:green')
-            plt.xlim((1e4, 1e10))
             plt.xscale('log')
-            plt.xlabel("Lookback Time (yr)")
-            plt.ylabel(r"SFR (M$_\odot$/yr)")
-            plt.legend()
+            plt.xlim((1e5, 1e11))
+            plt.yscale('log')
+            plt.ylim((5e-2, 4*self.sfh[i].max()))
             if suppress == False:
+                plt.xlabel("Lookback Time (yr)")
+                plt.ylabel(r"SFR (M$_\odot$/yr)")
+                plt.legend()
                 plt.show()
                 plt.close()
     
