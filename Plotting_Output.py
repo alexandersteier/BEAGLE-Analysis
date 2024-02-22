@@ -26,7 +26,6 @@ for i in range(Output.number_of_galaxies):
 
     elif number_of_params == 4:
         plt.subplot(4,4,2)
-        plt.title(f"Parameters (Galaxy {i})", size="small")
         plt.xlim([0,1])
         plt.ylim([0,1])
         info = '\n'.join((r'%.0f samples' % (Output.samples),
@@ -35,12 +34,20 @@ for i in range(Output.number_of_galaxies):
                           Output.param_names[2] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i][2].mean(), Output.params[i][2].std()),
                           Output.param_names[3] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i][3].mean(), Output.params[i][3].std())
                          ))
-        plt.text(0.05, 0.67, info, fontsize = 5.3, bbox = dict(edgecolor = 'white', facecolor = 'white', alpha = 1))
+        plt.text(0.05, 0.87, f"Parameters (Galaxy {i})", fontsize = 8, bbox = dict(edgecolor = 'white', facecolor = 'white', alpha = 1))
+        plt.text(0.05, 0.47, info, fontsize = 5.3, bbox = dict(edgecolor = 'white', facecolor = 'white', alpha = 1))
 
         plt.subplot(2,2,2)
         Output.spectra_plot(i)
-        plt.tick_params(axis='y', which='both', labelleft=False, left=False, labelright=True, right=True)
-        plt.tick_params(axis='x', which='both', labelbottom=False, bottom=False, labeltop=True, top=True)
+        plt.xlim(3e3, 5e4)
+        plt.xticks([1e4, 2e4, 3e4, 4e4])
+        plt.gca().set_xticks([0.5e4, 1.5e4, 2.5e4, 3.5e4, 4.5e4], minor=True)
+        plt.tick_params(axis='y', which='both', labelleft=False, left=False, labelright=True, right=True, direction='in', pad=-32)
+        plt.tick_params(axis='x', which='both', labelbottom=False, bottom=False, labeltop=True, top=True, direction='in', pad=-15)
+        plt.xlabel(r"$\lambda_{\mathrm{obs}}$ ($\AA$)")
+        plt.ylabel(r'$F_\nu$ (erg cm$^{-2}$ sec$^{-1}$ Hz$^{-1}$)', rotation=-90, labelpad=16)
+        plt.gca().yaxis.set_label_position("right")
+        plt.gca().xaxis.set_label_position("top")
 
         plt.subplot(4,4,12)
         Output.sfh_plot(i)
