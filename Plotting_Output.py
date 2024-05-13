@@ -1,8 +1,11 @@
 from Output_Wrangler import BEAGLE_Wrangler
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
-Output = BEAGLE_Wrangler('Fit 20', 100)
+fit_number = 25
+
+Output = BEAGLE_Wrangler(f'Fit {fit_number}', 50)
 
 number_of_params = len(Output.param_names)
 
@@ -29,10 +32,10 @@ for i in range(Output.number_of_galaxies):
         plt.xlim([0,1])
         plt.ylim([0,1])
         info = '\n'.join((r'%.0f samples' % (Output.samples),
-                          Output.param_names[0] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i][0].mean(), Output.params[i][0].std()),
-                          Output.param_names[1] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i][1].mean(), Output.params[i][1].std()),
-                          Output.param_names[2] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i][2].mean(), Output.params[i][2].std()),
-                          Output.param_names[3] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i][3].mean(), Output.params[i][3].std())
+                          Output.param_names[0] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i-1][0].mean(), Output.params[i-1][0].std()),
+                          Output.param_names[1] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i-1][1].mean(), Output.params[i-1][1].std()),
+                          Output.param_names[2] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i-1][2].mean(), Output.params[i-1][2].std()),
+                          Output.param_names[3] + r'$=%.3f\,\pm\,%.3f$' % (Output.params[i-1][3].mean(), Output.params[i-1][3].std())
                          ))
         plt.text(0.05, 0.87, f"Parameters (Galaxy {i})", fontsize = 8, bbox = dict(edgecolor = 'white', facecolor = 'white', alpha = 1))
         plt.text(0.05, 0.47, info, fontsize = 5.3, bbox = dict(edgecolor = 'white', facecolor = 'white', alpha = 1))
@@ -74,5 +77,13 @@ for i in range(Output.number_of_galaxies):
     else:
         print("Not appropriate number of parameters")
 
-    plt.show()
+    #"""
+    folder = f'/Users/alexander.steier/Python_Stockpile/BEAGLE_Outputs/Fit{fit_number}_Correlation_Plots' 
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    plt.savefig(f"/Users/alexander.steier/Python_Stockpile/BEAGLE_Outputs/Fit{fit_number}_Correlation_Plots/Fit{fit_number}_Correlation{i}.png", 
+                transparent=None, dpi=160, format='png', pad_inches=0.1)
+    #"""
+
+    #plt.show()
     plt.close()
